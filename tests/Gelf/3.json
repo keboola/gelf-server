@@ -1,0 +1,11 @@
+{
+    "version": "1.0",
+    "host": "Truhlik",
+    "short_message": "Exception example",
+    "full_message": "Exception: Test exception (0)\n\n#0 {main}\n",
+    "level": 0,
+    "timestamp": 1463507652.5224,
+    "file": "D:\\wwwroot\\gelf-server\\tests\\clients\\TcpClient.php",
+    "line": 18,
+    "_exception": "exception 'Exception' with message 'Test exception' in D:\\wwwroot\\gelf-server\\tests\\clients\\TcpClient.php:18\nStack trace:\n#0 {main}"
+}

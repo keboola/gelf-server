@@ -8,6 +8,7 @@ use React\Socket\Connection;
 use React\Socket\ConnectionException;
 use React\Socket\ServerInterface;
 
+
 /** Emits the connection event */
 class StreamServer extends EventEmitter implements ServerInterface
 {
@@ -19,6 +20,10 @@ class StreamServer extends EventEmitter implements ServerInterface
         $this->loop = $loop;
     }
 
+
+
+
+    // todo presunout do subclass
     public function listen($port, $host = '127.0.0.1')
     {
         $host = '0.0.0.0';

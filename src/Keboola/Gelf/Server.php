@@ -6,7 +6,7 @@ use Keboola\Gelf\Socket\AbstractSocket;
 use React\EventLoop\Factory;
 use React\Socket\ConnectionException;
 
-class Server extends \React\Socket\Server
+class Server #extends \React\Socket\Server
 {
     /**
      * @var array
@@ -20,9 +20,89 @@ class Server extends \React\Socket\Server
 
     const BUFFER_SIZE = 65536;
 
+    /**
+     * @var \Keboola\Gelf\StreamServer
+     */
+    private $server;
+
     private function processBuffer($buffer)
     {
 
+    }
+
+    public function start($onStart, $onProcess, $onTerminate, $onEvent)
+    {
+        $started = false;
+        $terminated = false;
+
+        $loop = \React\EventLoop\Factory::create();
+
+        $this->server = new \Keboola\Gelf\StreamServer($loop);
+        $server = $this->server;
+
+        $loop->addPeriodicTimer(1, function () use ($onStart, $onProcess, $onTerminate, &$started, &$terminated, &$server, &$loop) {
+            if (!$started) {
+                $onStart();
+                $started = true;
+            } else {
+                if ($terminated) {
+                    $onTerminate();
+                    $loop->stop();
+                    $this->server->shutdown();
+                } else {
+                    $onProcess($terminated);
+                    if ($terminated) {
+                    }
+                }
+            }
+            $memory = memory_get_usage() / 1024;
+            $formatted = number_format($memory, 3).'K';
+            dump("Current memory usage: {$formatted}");
+        });
+
+        $buffer = '';
+        $this->server->on('connection', function (\React\Socket\Connection $conn) use ($onEvent, &$buffer) {
+            #$conn->write("Hello there!\n");
+            #$conn->write("Welcome to this amazing server!\n");
+            #$conn->write("Here's a tip: don't say anything.\n");
+            dump("On Connection");
+            $conn->on('data', function ($data) use ($conn, $onEvent, &$buffer) {
+                dump("On data");
+                file_put_contents("hovno", $data);
+                $buffer .= $data;
+                if (substr($buffer, -1) != "\x00") {
+                    $partial = true;
+                } else {
+                    $partial = false;
+                }
+                $events = explode("\x00", $buffer);
+                if ($partial) {
+                    $buffer = array_pop($events);
+                } else {
+                    $buffer = '';
+                }
+                foreach ($events as $event) {
+                    if ($event) {
+                        $dataObject = json_decode($event, true);
+                        foreach ($dataObject as $key => $value) {
+                            if (substr($key, 0, 1) == '_') {
+                                // custom field
+                                $valueObject = json_decode($value, true);
+                                if (json_last_error() == JSON_ERROR_NONE) {
+                                    // successfully parsed
+                                    $dataObject[$key] = $valueObject;
+                                }
+                            }
+                        }
+                        $onEvent($dataObject);
+                    }
+                }
+                //dump($data);
+            });
+        });
+        $this->server->listen(12201);
+
+        $loop->run();
     }
 
     public function listen($port, $host = '127.0.0.1')
@@ -40,8 +120,8 @@ class Server extends \React\Socket\Server
         stream_set_blocking($this->master, 0);
 
         $that = $this;
-
-        $this->loop->addReadStream($this->master, function ($master) use ($that) {
+//
+  //      $this->loop->addReadStream($this->master, function ($master) use ($that) {
             $newSocket = @stream_socket_accept($master);
             if (false === $newSocket) {
                 $that->emit('error', array(new \RuntimeException('Error accepting new connection')));
@@ -49,11 +129,14 @@ class Server extends \React\Socket\Server
                 return;
             }
             $that->handleConnection($newSocket);
-        );
-    }
+       // );
     }
 
-        
+  //  }
+/*
+    }
+
+
         $loop = Factory::create();
         $socket = new \React\Socket\Server($loop);
         $socket->on('connection', function ($conn) {
@@ -72,16 +155,21 @@ class Server extends \React\Socket\Server
 
             }
     }
+*/
 
+    public function __construct()
+    {
+//        parent::__construct();
+    }
 
-    public function __construct(AbstractSocket $socket)
+    public function __constructd(AbstractSocket $socket)
     {
         $this->socket = $socket;
 
-            $buf = $buf_part;
+     //       $buf = $buf_part;
             #if ($r = socket_recvfrom($sock, $buf_part, 512, MSG_PEEK, $remote_ip, $remote_port)) {
 //    while (1) {
-            #   $buf = socket_read($sock, 100000000, PHP_BINARY_READ);
+            //   $buf = socket_read($sock, 100000000, PHP_BINARY_READ);
             //    if ($buf) {
             //      break;
             //}
@@ -97,7 +185,7 @@ class Server extends \React\Socket\Server
             #   echo "ret " . $r . "\n";
 #    } while ($r > 0);
 
-            echo "$remote_ip : $remote_port -- \n"; // . $buf;
+       //     echo "$remote_ip : $remote_port -- \n"; // . $buf;
 //    var_dump($buf[0]);
             var_dump(ord($buf[0]));
             //  file_put_contents("pokus", $buf);
@@ -159,6 +247,6 @@ class Server extends \React\Socket\Server
             #socket_sendto($sock, "OK " . $buf , 100 , 0 , $remote_ip , $remote_port);
         }
 
-        socket_close($sock);
-    }
+     #   socket_close($sock);
+    #}
 }

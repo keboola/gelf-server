@@ -1,6 +1,8 @@
 <?php
 
-require_once __DIR__ . '../../vendor/autoload.php';
+echo __DIR__ . DIRECTORY_SEPARATOR . '../../vendor/autoload.php' . "\n\n";
+
+require_once __DIR__ . DIRECTORY_SEPARATOR . '../../vendor/autoload.php';
 
 $transport = new Gelf\Transport\TcpTransport("127.0.0.1", 12201);
 
@@ -10,7 +12,7 @@ $publisher->addTransport($transport);
 $logger = new Gelf\Logger($publisher);
 
 $logger->debug("A debug message.");
-$logger->alert("An alert message");
+$logger->alert("An alert message", ['structure' => ['data' => [0, 1]]]);
 
 try {
     throw new Exception("Test exception");
@@ -28,5 +30,5 @@ $message->setShortMessage("Structured message")
 ;
 $publisher->publish($message);
 
-$logger->warning("A warning message.", ['a' => 'b']);
-$logger->info(file_get_contents("bacon.txt"));
+$logger->warning("A warning message.", ['structure' => ['with' => ['several' => 'nested', 'levels']]]);
+$logger->info(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . "bacon.txt"));
