@@ -100,6 +100,7 @@ class Server #extends \React\Socket\Server
                 //dump($data);
             });
         });
+        #$this->server->listenUdp(12201);
         $this->server->listen(12201);
 
         $loop->run();

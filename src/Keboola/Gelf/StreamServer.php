@@ -52,6 +52,38 @@ class StreamServer extends EventEmitter implements ServerInterface
         });
     }
 
+    public function listenUdp($port, $host = '127.0.0.1')
+    {
+        $host = '0.0.0.0';
+        if (strpos($host, ':') !== false) {
+            // enclose IPv6 addresses in square brackets before appending port
+            $host = '[' . $host . ']';
+        }
+
+        $this->master = stream_socket_server("udp://$host:$port", $errno, $errstr, STREAM_SERVER_BIND);
+        if (false === $this->master) {
+            $message = "Could not bind to udp://$host:$port: $errstr";
+            throw new ConnectionException($message, $errno);
+        }
+        stream_set_blocking($this->master, 0);
+
+        $that = $this;
+
+        $this->loop->addReadStream($this->master, function ($master) use ($that) {
+            #$newSocket = @stream_socket_accept($master);
+            //$this->emit('connection', array());
+            // @todo
+            $data = stream_socket_recvfrom($this->master, 1500);
+#            if (false === $newSocket) {
+ #               $that->emit('error', array(new \RuntimeException('Error accepting new connection')));
+#
+ #               return;
+  #          }
+   #         $that->handleConnection($newSocket);
+        });
+    }
+
+
     public function handleConnection($socket)
     {
         stream_set_blocking($socket, 0);
