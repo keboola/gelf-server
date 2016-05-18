@@ -1,7 +1,7 @@
 {
     "name": "keboola/gelf-server",
     "description": "Simple server for GELF logger",
-    "minimum-stability": "dev",
+    "minimum-stability": "stable",
     "license": "MIT",
     "authors": [
         {
@@ -16,8 +16,8 @@
     "require": {
         "react/socket": "~0.4.0",
         "graylog2/gelf-php": "~1.4.0",
-        "symfony/var-dumper": "~3.0.0",
-        "symfony/process": "~3.0.0"
+        "symfony/var-dumper": "~2.8.0",
+        "symfony/process": "~2.8.0"
     },
     "autoload": {
         "psr-0": {
