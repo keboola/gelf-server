@@ -14,10 +14,10 @@
         "phpunit/phpunit": "5.3.2"
     },
     "require": {
-        "react/socket": "v0.4.3",
-        "graylog2/gelf-php": "1.4.1",
-        "symfony/var-dumper": "v3.0.6",
-        "symfony/process": "v3.0.6"
+        "react/socket": "~0.4.0",
+        "graylog2/gelf-php": "~1.4.0",
+        "symfony/var-dumper": "~3.0.0",
+        "symfony/process": "~3.0.0"
     },
     "autoload": {
         "psr-0": {
