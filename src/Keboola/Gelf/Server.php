@@ -30,7 +30,7 @@ class Server #extends \React\Socket\Server
 
     }
 
-    public function start($onStart, $onProcess, $onTerminate, $onEvent)
+    public function start($port, $onStart, $onProcess, $onTerminate, $onEvent)
     {
         $started = false;
         $terminated = false;
@@ -68,7 +68,7 @@ class Server #extends \React\Socket\Server
             dump("On Connection");
             $conn->on('data', function ($data) use ($conn, $onEvent, &$buffer) {
                 dump("On data");
-                file_put_contents("hovno", $data);
+                //file_put_contents("hovno", $data);
                 $buffer .= $data;
                 if (substr($buffer, -1) != "\x00") {
                     $partial = true;
@@ -101,7 +101,7 @@ class Server #extends \React\Socket\Server
             });
         });
         #$this->server->listenUdp(12201);
-        $this->server->listen(12201);
+        $this->server->listen($port);
 
         $loop->run();
     }

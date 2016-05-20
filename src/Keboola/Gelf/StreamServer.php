@@ -26,7 +26,7 @@ class StreamServer extends EventEmitter implements ServerInterface
     // todo presunout do subclass
     public function listen($port, $host = '127.0.0.1')
     {
-        $host = '0.0.0.0';
+    //    $host = '0.0.0.0';
         if (strpos($host, ':') !== false) {
             // enclose IPv6 addresses in square brackets before appending port
             $host = '[' . $host . ']';
