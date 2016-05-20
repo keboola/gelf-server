@@ -30,7 +30,7 @@ class Server #extends \React\Socket\Server
 
     }
 
-    public function start($port, $onStart, $onProcess, $onTerminate, $onEvent)
+    public function start($minPort, $maxPort, $onStart, $onProcess, $onTerminate, $onEvent)
     {
         $started = false;
         $terminated = false;
@@ -39,10 +39,10 @@ class Server #extends \React\Socket\Server
 
         $this->server = new \Keboola\Gelf\StreamServer($loop);
         $server = $this->server;
-
-        $loop->addPeriodicTimer(1, function () use ($onStart, $onProcess, $onTerminate, &$started, &$terminated, &$server, &$loop) {
+        $port = '';
+        $loop->addPeriodicTimer(1, function () use ($onStart, $onProcess, $onTerminate, &$started, &$terminated, &$server, &$loop, &$port) {
             if (!$started) {
-                $onStart();
+                $onStart($port);
                 $started = true;
             } else {
                 if ($terminated) {
@@ -57,7 +57,7 @@ class Server #extends \React\Socket\Server
             }
             $memory = memory_get_usage() / 1024;
             $formatted = number_format($memory, 3).'K';
-            dump("Current memory usage: {$formatted}");
+            echo("Current memory usage: {$formatted}");
         });
 
         $buffer = '';
@@ -65,10 +65,10 @@ class Server #extends \React\Socket\Server
             #$conn->write("Hello there!\n");
             #$conn->write("Welcome to this amazing server!\n");
             #$conn->write("Here's a tip: don't say anything.\n");
-            dump("On Connection");
+            echo("On Connection");
             $conn->on('data', function ($data) use ($conn, $onEvent, &$buffer) {
-                dump("On data");
-                //file_put_contents("hovno", $data);
+                echo("On data");
+                file_put_contents("hovno", $data);
                 $buffer .= $data;
                 if (substr($buffer, -1) != "\x00") {
                     $partial = true;
@@ -100,10 +100,31 @@ class Server #extends \React\Socket\Server
                 //dump($data);
             });
         });
+
+        if ($minPort > $maxPort) {
+            throw new \Exception("Invalid range");
+        }
+
         #$this->server->listenUdp(12201);
-        $this->server->listen($port);
+        $retries = 0;
+        $maxRetries = 10;
+        $connected = false;
+        while (!$connected && ($retries < $maxRetries)) {
+            $port = rand($minPort, $maxPort);
+            try {
+                $this->server->listen($port);
+                $connected = true;
+            } catch (ConnectionException $e) {
+                $retries++;
+                if ($retries >= $maxRetries) {
+                    throw $e;
+                }
+            }
+        }
 
         $loop->run();
+        return $port;
+
     }
 
     public function listen($port, $host = '127.0.0.1')

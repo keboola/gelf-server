@@ -49,24 +49,4 @@ class TcpStreamServerTest extends \PHPUnit_Framework_TestCase
             }
         );
     }
-
-
-    public function testServerPorts()
-    {
-        $server1 = new Server();
-        dump('starting server 2');
-        $server1->start(
-            12201,
-            function () {
-              // sleep(10);
-                dump('server 2 started');
-            }, function () {
-                dump('server 2 running');
-            }, function () {
-                dump('server 2 terminated');
-            }, function () {
-                dump('server 2 message');
-            }
-        );
-    }
 }
