@@ -2,50 +2,54 @@
 
 namespace Keboola\Gelf\Tests;
 
-use Keboola\Gelf\Server;
 use Keboola\Gelf\StreamServer;
+use Keboola\Gelf\UdpServer;
 use Symfony\Component\Process\Process;
 
 class UdpStreamServerTest extends \PHPUnit_Framework_TestCase
 {
     public function testServer()
     {
-        $server = new Server();
+        $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
+        $server = new UdpServer();
 
-        $process = new Process('php ' . ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR . 'clients' . DIRECTORY_SEPARATOR . 'UdpClient.php');
-        $cntr = 0;
+        $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'UdpClient.php');
+        $counter = 0;
         $server->start(
+            12201,
+            12201,
             function () use ($process) {
-                dump("server started");
                 $process->start();
             },
-            function (&$terminated) use(&$cntr, $process) {
-                dump("server running $cntr");
-                //$cntr++;
-                if ($cntr < 0) {
-                    //$terminated = true;
-                }
-                if ($process->isRunning()) {
-                    dump("Client is running");
-                } else {
-                    dump("Client output");
+            function (&$terminated) use ($process) {
+                if (!$process->isRunning()) {
                     dump($process->getOutput());
                     $terminated = true;
                 }
             },
-            function () {
-                dump("server terminated");
-            },
-            function ($event) use (&$cntr) {
-                $cntr++;
-                $file = __DIR__ . DIRECTORY_SEPARATOR . $cntr . ".json";
-                dump($file);
-                //file_put_contents($file, json_encode($event, JSON_PRETTY_PRINT));
-                $mustr = json_decode(file_get_contents($file), true);
-                unset($mustr['timestamp']);
+            function ($event) use (&$counter, $testsDir) {
+                $counter++;
+                $file = $testsDir . 'data' . DIRECTORY_SEPARATOR . $counter . ".json";
+                $target = json_decode(file_get_contents($file), true);
+
+                if ($event['short_message'] == 'Exception example') {
+                    $this->assertArrayHasKey('_exception', $event);
+                    $this->assertArrayHasKey('file', $event);
+                    unset($event['_exception']);
+                    unset($target['_exception']);
+                    unset($event['file']);
+                    unset($target['file']);
+                }
+                $this->assertArrayHasKey('timestamp', $event);
                 unset($event['timestamp']);
-                $this->assertEquals($mustr, $event);
-                //dump($event);
+                unset($target['timestamp']);
+                $this->assertArrayHasKey('host', $event);
+                unset($event['host']);
+                unset($target['host']);
+                $this->assertEquals($target, $event);
+            },
+            function () use (&$counter) {
+                $this->assertEquals(6, $counter);
             }
         );
     }

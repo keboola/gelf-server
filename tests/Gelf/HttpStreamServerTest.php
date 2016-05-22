@@ -2,22 +2,22 @@
 
 namespace Keboola\Gelf\Tests;
 
+use Keboola\Gelf\HttpServer;
 use Keboola\Gelf\StreamServer;
-use Keboola\Gelf\TcpServer;
 use Symfony\Component\Process\Process;
 
-class TcpStreamServerTest extends \PHPUnit_Framework_TestCase
+class HttpStreamServerTest extends \PHPUnit_Framework_TestCase
 {
     public function testServer()
     {
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
-        $server = new TcpServer();
+        $server = new HttpServer();
 
-        $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'TcpClient.php');
+        $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'HttpClient.php');
         $counter = 0;
         $server->start(
-            12201,
-            12201,
+            12202,
+            12202,
             function () use ($process) {
                 $process->start();
             },
