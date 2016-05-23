@@ -2,7 +2,7 @@
 
 namespace Keboola\Gelf\Tests;
 
-use Keboola\Gelf\HttpServer;
+use Keboola\Gelf\ServerFactory;
 use Keboola\Gelf\StreamServer;
 use Symfony\Component\Process\Process;
 
@@ -11,7 +11,7 @@ class HttpStreamServerTest extends \PHPUnit_Framework_TestCase
     public function testServer()
     {
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
-        $server = new HttpServer();
+        $server = ServerFactory::createServer(ServerFactory::SERVER_HTTP);
 
         $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'HttpClient.php');
         $counter = 0;

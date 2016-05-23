@@ -2,8 +2,8 @@
 
 namespace Keboola\Gelf\Tests;
 
+use Keboola\Gelf\ServerFactory;
 use Keboola\Gelf\StreamServer;
-use Keboola\Gelf\TcpServer;
 use Symfony\Component\Process\Process;
 
 class TcpStreamServerTest extends \PHPUnit_Framework_TestCase
@@ -11,7 +11,7 @@ class TcpStreamServerTest extends \PHPUnit_Framework_TestCase
     public function testServer()
     {
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
-        $server = new TcpServer();
+        $server = ServerFactory::createServer(ServerFactory::SERVER_TCP);
 
         $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'TcpClient.php');
         $counter = 0;

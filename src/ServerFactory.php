@@ -12,7 +12,7 @@ class ServerFactory
      * @param $serverType
      * @return AbstractServer
      */
-    public function createServer($serverType)
+    public static function createServer($serverType)
     {
         switch ($serverType) {
             case self::SERVER_UDP:

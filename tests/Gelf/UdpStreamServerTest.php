@@ -2,8 +2,8 @@
 
 namespace Keboola\Gelf\Tests;
 
+use Keboola\Gelf\ServerFactory;
 use Keboola\Gelf\StreamServer;
-use Keboola\Gelf\UdpServer;
 use Symfony\Component\Process\Process;
 
 class UdpStreamServerTest extends \PHPUnit_Framework_TestCase
@@ -11,7 +11,7 @@ class UdpStreamServerTest extends \PHPUnit_Framework_TestCase
     public function testServer()
     {
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
-        $server = new UdpServer();
+        $server = ServerFactory::createServer(ServerFactory::SERVER_UDP);
 
         $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'UdpClient.php');
         $counter = 0;
