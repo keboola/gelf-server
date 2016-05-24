@@ -23,8 +23,9 @@ abstract class AbstractServer
      * Find a free port for the server and start it.
      * @param int $minPort Min port in range (inclusive).
      * @param int $maxPort Max port in range (inclusive).
+     * @param int $port Actual selected port (output).
      */
-    protected function startServer($minPort, $maxPort)
+    protected function startServer($minPort, $maxPort, &$port)
     {
         if ($minPort > $maxPort) {
             throw new InitException("Invalid port range min ($minPort) is bigger than max ($maxPort).");

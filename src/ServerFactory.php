@@ -18,9 +18,9 @@ class ServerFactory
             case self::SERVER_UDP:
                 return new UdpServer();
             case self::SERVER_TCP:
-                return new HttpServer();
+                return new TcpServer();
             case self::SERVER_HTTP:
-                return new UdpServer();
+                return new HttpServer();
             default:
                 throw new \LogicException("Invalid Server type $serverType");
         }

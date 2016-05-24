@@ -18,7 +18,8 @@ class UdpStreamServerTest extends \PHPUnit_Framework_TestCase
         $server->start(
             12201,
             12201,
-            function () use ($process) {
+            function ($port) use ($process) {
+                $this->assertEquals(12201, $port);
                 $process->start();
             },
             function (&$terminated) use ($process) {

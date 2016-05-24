@@ -82,7 +82,7 @@ class HttpServer extends AbstractServer
             });
         });
 
-        $this->startServer($minPort, $maxPort);
+        $this->startServer($minPort, $maxPort, $port);
         $loop->run();
     }
 }

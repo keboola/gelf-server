@@ -22,7 +22,7 @@ class UdpServer extends AbstractServer
         $loop = Factory::create();
         $this->server = new UdpStreamServer($loop);
 
-        $countDown = 5;
+        $countDown = 3;
         $loop->addPeriodicTimer(
             1,
             function () use ($onStart, $onProcess, $onTerminate, &$started, &$terminated, &$loop, &$port, &$countDown) {
@@ -55,7 +55,7 @@ class UdpServer extends AbstractServer
             }
         });
 
-        $this->startServer($minPort, $maxPort);
+        $this->startServer($minPort, $maxPort, $port);
         $loop->run();
     }
 

@@ -1,7 +1,5 @@
 <?php
 
-echo __DIR__ . DIRECTORY_SEPARATOR . '../../vendor/autoload.php' . "\n\n";
-
 require_once __DIR__ . DIRECTORY_SEPARATOR . '../../vendor/autoload.php';
 
 $transport = new Gelf\Transport\UdpTransport();

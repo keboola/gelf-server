@@ -18,7 +18,8 @@ class HttpStreamServerTest extends \PHPUnit_Framework_TestCase
         $server->start(
             12202,
             12202,
-            function () use ($process) {
+            function ($port) use ($process) {
+                $this->assertEquals(12202, $port);
                 $process->start();
             },
             function (&$terminated) use ($process) {
