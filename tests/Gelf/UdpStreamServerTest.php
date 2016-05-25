@@ -13,7 +13,7 @@ class UdpStreamServerTest extends \PHPUnit_Framework_TestCase
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
         $server = ServerFactory::createServer(ServerFactory::SERVER_UDP);
 
-        $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'UdpClient.php');
+        $process = new Process('php ' . $testsDir . 'Clients' . DIRECTORY_SEPARATOR . 'UdpClient.php');
         $counter = 0;
         $server->start(
             12201,

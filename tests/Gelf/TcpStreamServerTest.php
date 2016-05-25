@@ -13,7 +13,7 @@ class TcpStreamServerTest extends \PHPUnit_Framework_TestCase
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
         $server = ServerFactory::createServer(ServerFactory::SERVER_TCP);
 
-        $process = new Process('php ' . $testsDir . 'clients' . DIRECTORY_SEPARATOR . 'TcpClient.php');
+        $process = new Process('php ' . $testsDir . 'Clients' . DIRECTORY_SEPARATOR . 'TcpClient.php');
         $counter = 0;
         $server->start(
             12201,
@@ -24,6 +24,7 @@ class TcpStreamServerTest extends \PHPUnit_Framework_TestCase
             },
             function (&$terminated) use ($process) {
                 if (!$process->isRunning()) {
+                    dump($process->getOutput());
                     $terminated = true;
                 }
             },
