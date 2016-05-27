@@ -1,4 +1,4 @@
-# GELF server
+# GELF server [![Build Status](https://travis-ci.org/keboola/gelf-server.svg?branch=master)](https://travis-ci.org/keboola/gelf-server) [![Code Climate](https://codeclimate.com/github/keboola/gelf-server/badges/gpa.svg)](https://codeclimate.com/github/keboola/gelf-server) [![Test Coverage](https://codeclimate.com/github/keboola/gelf-server/badges/coverage.svg)](https://codeclimate.com/github/keboola/gelf-server/coverage)
 
 A php implementation of a [gelf](http://docs.graylog.org/en/2.0/pages/gelf.html) compatible backend like [Graylog2](https://www.graylog.org/). This library provides
 a simple server to which a GELF client can connect. 
@@ -7,7 +7,7 @@ a simple server to which a GELF client can connect.
 
 Recommended installation via composer:
 
-Add gelf-server to composer.json either by running composer require keboola/gelf-server or by defining it manually:
+Add gelf-server to composer.json either by running `composer require keboola/gelf-server` or by defining it manually:
 
 	"require": {
 	   // ...
