@@ -11,11 +11,10 @@ $server->start(
     function ($port) {
         echo "HTTP Server listening on port $port ";
     },
-    function () {
+    function (&$terminated) {
         echo ".";
     },
     function ($event) {
         var_dump($event);
     }
 );
-    
