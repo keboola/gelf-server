@@ -9,7 +9,7 @@ class InvalidMessageException extends \RuntimeException
     public function __construct($message, $data)
     {
         parent::__construct($message, 0, null);
-        $this->data;
+        $this->data = $data;
     }
 
     public function getData()
