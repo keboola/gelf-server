@@ -64,11 +64,15 @@ abstract class AbstractServer
         foreach ($dataObject as $key => $value) {
             if (substr($key, 0, 1) == '_') {
                 // custom field may get double encoded
-                $valueObject = json_decode($value, true);
-                if (json_last_error() == JSON_ERROR_NONE) {
-                    // successfully parsed
-                    $dataObject[$key] = $valueObject;
-                } // else not a json, leave as is
+                if (is_array($value)) {
+                    $dataObject[$key] = $value;
+                } else {
+                    $valueObject = json_decode($value, true);
+                    if (json_last_error() == JSON_ERROR_NONE) {
+                        // successfully parsed
+                        $dataObject[$key] = $valueObject;
+                    } // else not a json, leave as is
+                }
             } // else not a custom field, leave as is
         }
         return $dataObject;
