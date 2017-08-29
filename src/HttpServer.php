@@ -5,7 +5,6 @@ namespace Keboola\Gelf;
 use Keboola\Gelf\Exception\InvalidMessageException;
 use Keboola\Gelf\StreamServer\TcpStreamServer;
 use React\EventLoop\Factory;
-use React\Socket\Connection;
 use React\Socket\ConnectionInterface;
 
 class HttpServer extends AbstractServer
@@ -40,7 +39,7 @@ class HttpServer extends AbstractServer
                             $onTerminate();
                         }
                         $loop->stop();
-                        $this->server->shutdown();
+                        $this->server->close();
                     } else {
                         $onProcess($terminated);
                     }

@@ -4,7 +4,6 @@ namespace Keboola\Gelf;
 
 use Keboola\Gelf\Exception\InitException;
 use Keboola\Gelf\Exception\InvalidMessageException;
-use React\Socket\ConnectionException;
 use React\Socket\ServerInterface;
 
 abstract class AbstractServer
@@ -38,7 +37,7 @@ abstract class AbstractServer
             try {
                 $this->server->listen($port);
                 $connected = true;
-            } catch (ConnectionException $e) {
+            } catch (\RuntimeException $e) {
                 $retries++;
                 if ($retries >= self::SERVER_START_RETRIES) {
                     throw new InitException("Failed to start server " . $e->getMessage(), $e);

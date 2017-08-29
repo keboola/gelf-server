@@ -4,7 +4,6 @@ namespace Keboola\Gelf;
 
 use Keboola\Gelf\StreamServer\TcpStreamServer;
 use React\EventLoop\Factory;
-use React\Socket\Connection;
 use React\Socket\ConnectionInterface;
 
 class TcpServer extends AbstractServer
@@ -39,7 +38,7 @@ class TcpServer extends AbstractServer
                             $onTerminate();
                         }
                         $loop->stop();
-                        $this->server->shutdown();
+                        $this->server->close();
                     } else {
                         $onProcess($terminated);
                     }

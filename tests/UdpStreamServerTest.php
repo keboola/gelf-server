@@ -9,11 +9,12 @@ class UdpStreamServerTest extends AbstractGelfTest
 {
     public function testServer()
     {
-        $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
         $server = ServerFactory::createServer(ServerFactory::SERVER_UDP);
         $events = [];
         $fails = [];
-        $process = new Process('php ' . $testsDir . 'Clients' . DIRECTORY_SEPARATOR . 'UdpClient.php');
+        $process = new Process(
+            'php ' . __DIR__ . DIRECTORY_SEPARATOR . 'Clients' . DIRECTORY_SEPARATOR . 'UdpClient.php'
+        );
         $server->start(
             12201,
             12201,

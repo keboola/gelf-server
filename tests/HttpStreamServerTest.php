@@ -5,20 +5,21 @@ namespace Keboola\Gelf\Tests;
 use Keboola\Gelf\ServerFactory;
 use Symfony\Component\Process\Process;
 
-class TcpStreamServerTest extends AbstractGelfTest
+class HttpStreamServerTest extends AbstractGelfTest
 {
     public function testServer()
     {
-        $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
-        $server = ServerFactory::createServer(ServerFactory::SERVER_TCP);
+        $server = ServerFactory::createServer(ServerFactory::SERVER_HTTP);
         $events = [];
         $fails = [];
-        $process = new Process('php ' . $testsDir . 'Clients' . DIRECTORY_SEPARATOR . 'TcpClient.php');
+        $process = new Process(
+            'php ' . __DIR__ . DIRECTORY_SEPARATOR . 'Clients' . DIRECTORY_SEPARATOR . 'HttpClient.php'
+        );
         $server->start(
-            12201,
-            12201,
+            12202,
+            12202,
             function ($port) use ($process) {
-                self::assertEquals(12201, $port);
+                self::assertEquals(12202, $port);
                 $process->start();
             },
             function (&$terminated) use ($process) {
@@ -35,6 +36,10 @@ class TcpStreamServerTest extends AbstractGelfTest
             }
         );
         $this->checkResults($events);
-        self::assertEquals(['complete garbage'], $fails);
+        self::assertEquals(
+            ['POST /gelf HTTP/1.1', 'Content-Length: 193',
+                'POST /gelf HTTP/1.1', 'Content-Length: 16', 'complete garbage'],
+            $fails
+        );
     }
 }

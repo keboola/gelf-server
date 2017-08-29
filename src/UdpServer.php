@@ -44,7 +44,7 @@ class UdpServer extends AbstractServer
                                 $onTerminate();
                             }
                             $loop->stop();
-                            $this->server->shutdown();
+                            $this->server->close();
                         }
                     } else {
                         $onProcess($terminated);

@@ -7,7 +7,6 @@ use React\Datagram\Factory;
 use React\Datagram\Socket;
 use React\EventLoop\LoopInterface;
 use React\Socket\Connection;
-use React\Socket\ConnectionException;
 use React\Socket\ServerInterface;
 
 class UdpStreamServer extends EventEmitter implements ServerInterface
@@ -25,6 +24,18 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
     private $loop;
 
     /**
+     * Server address
+     * @var string
+     */
+    private $address;
+
+    /**
+     * IS the server paused
+     * @var bool
+     */
+    private $isPaused;
+
+    /**
      * TcpStreamServer constructor.
      * @param LoopInterface $loop
      */
@@ -37,10 +48,11 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
      * Start the server by listening on a specified port and address.
      * @param int $port
      * @param string $host
-     * @throws ConnectionException
+     * @throws \RuntimeException
      */
     public function listen($port, $host = '0.0.0.0')
     {
+        $this->address = $port . ':' . $host;
         $factory = new Factory($this->loop);
         $factory->createServer($host . ':' . $port)->then(function (Socket $server) {
             $this->socket = $server;
@@ -56,7 +68,7 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
         return (int) substr(strrchr($name, ':'), 1);
     }
 
-    public function shutdown()
+    public function close()
     {
         $this->socket->end();
         $this->removeAllListeners();
@@ -65,5 +77,29 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
     public function createConnection($socket)
     {
         return new Connection($socket, $this->loop);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function pause()
+    {
+        $this->isPaused = true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resume()
+    {
+        $this->isPaused = false;
     }
 }
