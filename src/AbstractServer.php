@@ -61,6 +61,9 @@ abstract class AbstractServer
                 $data
             );
         }
+        if (!$dataObject) {
+            return [];
+        }
         foreach ($dataObject as $key => $value) {
             if (substr($key, 0, 1) == '_') {
                 // custom field may get double encoded
@@ -89,6 +92,10 @@ abstract class AbstractServer
                     // try the message split in lines
                     $lines = explode("\n", $event);
                     foreach ($lines as $line) {
+                        $line = trim($line);
+                        if (empty($line)) {
+                            continue;
+                        }
                         try {
                             $dataObject = $this->processEventData($line);
                             $onEvent($dataObject);

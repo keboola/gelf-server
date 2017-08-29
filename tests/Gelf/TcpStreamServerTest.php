@@ -12,6 +12,7 @@ class TcpStreamServerTest extends AbstractGelfTest
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
         $server = ServerFactory::createServer(ServerFactory::SERVER_TCP);
         $events = [];
+        $fails = [];
         $process = new Process('php ' . $testsDir . 'Clients' . DIRECTORY_SEPARATOR . 'TcpClient.php');
         $server->start(
             12201,
@@ -22,14 +23,18 @@ class TcpStreamServerTest extends AbstractGelfTest
             },
             function (&$terminated) use ($process) {
                 if (!$process->isRunning()) {
-                    dump($process->getOutput());
                     $terminated = true;
                 }
             },
             function ($event) use (&$events) {
                 $events[] = $event;
+            },
+            null,
+            function ($event) use (&$fails) {
+                $fails[] = $event;
             }
         );
         $this->checkResults($events);
+        self::assertEquals(['complete garbage'], $fails);
     }
 }

@@ -12,6 +12,7 @@ class HttpStreamServerTest extends AbstractGelfTest
         $testsDir = ROOT_PATH . DIRECTORY_SEPARATOR . 'tests' . DIRECTORY_SEPARATOR;
         $server = ServerFactory::createServer(ServerFactory::SERVER_HTTP);
         $events = [];
+        $fails = [];
         $process = new Process('php ' . $testsDir . 'Clients' . DIRECTORY_SEPARATOR . 'HttpClient.php');
         $server->start(
             12202,
@@ -22,14 +23,22 @@ class HttpStreamServerTest extends AbstractGelfTest
             },
             function (&$terminated) use ($process) {
                 if (!$process->isRunning()) {
-                    dump($process->getOutput());
                     $terminated = true;
                 }
             },
             function ($event) use (&$events) {
                 $events[] = $event;
+            },
+            null,
+            function ($event) use (&$fails) {
+                $fails[] = $event;
             }
         );
         $this->checkResults($events);
+        self::assertEquals(
+            ['POST /gelf HTTP/1.1', 'Content-Length: 193',
+                'POST /gelf HTTP/1.1', 'Content-Length: 16', 'complete garbage'],
+            $fails
+        );
     }
 }

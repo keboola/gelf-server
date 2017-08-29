@@ -46,15 +46,15 @@ if (socket_connect($socket, $server, $port) === false) {
     echo "Cannot connect to socket: [$errorCode] $errorMsg";
 }
 
-$buff = '{"version":"1.0","short_message":"A message without host","level":7,"timestamp":1504008347}';
-$buff = "POST /gelf HTTP/1.1\r\nContent-Type: application/json\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff;
+$buff = '{"version":"1.0","short_message":"No host","level":7,"timestamp":1504008347}';
+$buff = "POST /gelf HTTP/1.1\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff . "\r\n";
 socket_send($socket, $buff, strlen($buff), 0);
-$buff = '{"version":"1.0","short_message":"First message","level":7,"timestamp":1504008347}' . "\r\n" .
-    '{"version":"1.0","short_message":"Second message","level":7,"timestamp":1504001234}';
-$buff = "POST /gelf HTTP/1.1\r\nContent-Type: application/json\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff;
+$buff = '{"version":"1.0","host":"abc","short_message":"First message","level":7,"timestamp":1504008347}' . "\r\n" .
+    '{"version":"1.0","host":"abc","short_message":"Second message","level":7,"timestamp":1504001234}';
+$buff = "POST /gelf HTTP/1.1\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff . "\r\n";
 socket_send($socket, $buff, strlen($buff), 0);
 $buff = 'complete garbage';
-$buff = "POST /gelf HTTP/1.1\r\nContent-Type: application/json\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff;
+$buff = "POST /gelf HTTP/1.1\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff . "\r\n";
 socket_send($socket, $buff, strlen($buff), 0);
 
 socket_close($socket);

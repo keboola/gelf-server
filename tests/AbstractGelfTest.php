@@ -13,9 +13,9 @@ abstract class AbstractGelfTest extends \PHPUnit_Framework_TestCase
         $exception = '';
         foreach ($events as $event) {
             self::assertArrayHasKey('timestamp', $event);
-            self::assertArrayHasKey('host', $event);
+            self::assertTrue(!empty($event['host']) || ($event['short_message'] == 'No host'));
             $timestamps[] = $event['timestamp'];
-            $hosts[] = $event['host'];
+            $hosts[] = empty($event['host']) ? 'empty' : $event['host'];
             if (!empty($event['file'])) {
                 $file = $event['file'];
                 $exception = $event['_exception'];
@@ -82,6 +82,26 @@ abstract class AbstractGelfTest extends \PHPUnit_Framework_TestCase
                     file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'Clients' . DIRECTORY_SEPARATOR . 'bacon.txt'),
                 'level' => 6,
                 'timestamp' => $timestamps[5],
+            ],
+            6 => [
+                'version' => '1.0',
+                'short_message' => 'No host',
+                'level' => 7,
+                'timestamp' => $timestamps[6],
+            ],
+            7 => [
+                'version' => '1.0',
+                'host' => $hosts[7],
+                'short_message' => 'First message',
+                'level' => 7,
+                'timestamp' => $timestamps[7],
+            ],
+            8 => [
+                'version' => '1.0',
+                'host' => $hosts[8],
+                'short_message' => 'Second message',
+                'level' => 7,
+                'timestamp' => $timestamps[8],
             ]
         ], $events);
     }

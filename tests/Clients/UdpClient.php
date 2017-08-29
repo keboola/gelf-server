@@ -46,10 +46,12 @@ if (socket_connect($socket, $server, $port) === false) {
     echo "Cannot connect to socket: [$errorCode] $errorMsg";
 }
 
-$buff = gzcompress('{"version":"1.0","short_message":"A message without host","level":7,"timestamp":1504008347}');
+$buff = gzcompress('{"version":"1.0","short_message":"No host","level":7,"timestamp":1504008347}');
 socket_send($socket, $buff, strlen($buff), 0);
-$buff = gzcompress('{"version":"1.0","short_message":"First message","level":7,"timestamp":1504008347}' . "\n" .
-    '{"version":"1.0","short_message":"Second message","level":7,"timestamp":1504001234}');
+$buff = gzcompress(
+    '{"version":"1.0","host":"abc","short_message":"First message","level":7,"timestamp":1504008347}' . "\n" .
+    '{"version":"1.0","host":"abc","short_message":"Second message","level":7,"timestamp":1504001234}'
+);
 socket_send($socket, $buff, strlen($buff), 0);
 $buff = gzcompress('complete garbage');
 socket_send($socket, $buff, strlen($buff), 0);
