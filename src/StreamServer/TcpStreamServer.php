@@ -5,7 +5,6 @@ namespace Keboola\Gelf\StreamServer;
 use Evenement\EventEmitter;
 use React\EventLoop\LoopInterface;
 use React\Socket\Connection;
-use React\Socket\ConnectionException;
 use React\Socket\ServerInterface;
 
 /** Emits the connection event */
@@ -24,6 +23,18 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
     private $loop;
 
     /**
+     * Server address
+     * @var string
+     */
+    private $address;
+
+    /**
+     * IS the server paused
+     * @var bool
+     */
+    private $isPaused;
+
+    /**
      * TcpStreamServer constructor.
      * @param LoopInterface $loop
      */
@@ -36,10 +47,11 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
      * Start the server by listening on a specified port and address.
      * @param int $port
      * @param string $host
-     * @throws ConnectionException
+     * @throws \RuntimeException
      */
     public function listen($port, $host = '0.0.0.0')
     {
+        $this->address = $port . ':' . $host;
         if (strpos($host, ':') !== false) {
             // enclose IPv6 addresses in square brackets before appending port
             $host = '[' . $host . ']';
@@ -48,14 +60,14 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
         $this->master = stream_socket_server("tcp://$host:$port", $errorNumber, $errorString);
         if (false === $this->master) {
             $message = "Could not bind to tcp://$host:$port: $errorString";
-            throw new ConnectionException($message, $errorNumber);
+            throw new \RuntimeException($message, $errorNumber);
         }
         stream_set_blocking($this->master, 0);
 
         $this->loop->addReadStream($this->master, function ($master) {
             $newSocket = @stream_socket_accept($master);
             if (false === $newSocket) {
-                $this->emit('error', array(new \RuntimeException('Error accepting new connection')));
+                $this->emit('error', [new \RuntimeException('Error accepting new connection')]);
 
                 return;
             }
@@ -67,7 +79,7 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
     {
         stream_set_blocking($socket, 0);
         $client = $this->createConnection($socket);
-        $this->emit('connection', array($client));
+        $this->emit('connection', [$client]);
     }
 
     public function getPort()
@@ -76,7 +88,10 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
         return (int) substr(strrchr($name, ':'), 1);
     }
 
-    public function shutdown()
+    /**
+     * @inheritdoc
+     */
+    public function close()
     {
         $this->loop->removeStream($this->master);
         fclose($this->master);
@@ -86,5 +101,29 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
     public function createConnection($socket)
     {
         return new Connection($socket, $this->loop);
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function getAddress()
+    {
+        return $this->address;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function pause()
+    {
+        $this->isPaused = true;
+    }
+
+    /**
+     * @inheritdoc
+     */
+    public function resume()
+    {
+        $this->isPaused = false;
     }
 }

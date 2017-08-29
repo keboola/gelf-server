@@ -5,15 +5,22 @@ namespace Keboola\Gelf;
 use Keboola\Gelf\Exception\InvalidMessageException;
 use Keboola\Gelf\StreamServer\TcpStreamServer;
 use React\EventLoop\Factory;
-use React\Socket\Connection;
+use React\Socket\ConnectionInterface;
 
 class HttpServer extends AbstractServer
 {
     /**
      * @inheritdoc
      */
-    public function start($minPort, $maxPort, callable $onStart, callable $onProcess, callable $onEvent, callable $onTerminate = null)
-    {
+    public function start(
+        $minPort,
+        $maxPort,
+        callable $onStart,
+        callable $onProcess,
+        callable $onEvent,
+        callable $onTerminate = null,
+        callable $onError = null
+    ) {
         $started = false;
         $terminated = false;
         $port = '';
@@ -32,7 +39,7 @@ class HttpServer extends AbstractServer
                             $onTerminate();
                         }
                         $loop->stop();
-                        $this->server->shutdown();
+                        $this->server->close();
                     } else {
                         $onProcess($terminated);
                     }
@@ -42,8 +49,8 @@ class HttpServer extends AbstractServer
 
         $buffer = '';
         $contentLength = null;
-        $this->server->on('connection', function (Connection $conn) use ($onEvent, &$buffer) {
-            $conn->on('data', function ($data) use ($conn, $onEvent, &$buffer, &$contentLength) {
+        $this->server->on('connection', function (ConnectionInterface $conn) use ($onEvent, $onError, &$buffer) {
+            $conn->on('data', function ($data) use ($conn, $onEvent, $onError, &$buffer, &$contentLength) {
                 $headers = substr($data, 0, strpos($data, "\r\n\r\n"));
                 if ($headers) {
                     $headers = explode("\r\n", $headers);
@@ -73,8 +80,7 @@ class HttpServer extends AbstractServer
                     $contentLength = null;
                 }
                 if ($messageData) {
-                    $dataObject = $this->processEventData($messageData);
-                    $onEvent($dataObject);
+                    $this->processEvents([$messageData], $onEvent, $onError);
                     $conn->write(
                         "HTTP/1.1 202 Accepted\r\nConnection: Keep-Alive\r\nContent-Type: application/json\r\n\r\n"
                     );
