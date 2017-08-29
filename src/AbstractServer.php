@@ -78,6 +78,31 @@ abstract class AbstractServer
         return $dataObject;
     }
 
+    protected function processEvents($events, $onEvent, $onError)
+    {
+        foreach ($events as $event) {
+            if ($event) {
+                try {
+                    $dataObject = $this->processEventData($event);
+                    $onEvent($dataObject);
+                } catch (InvalidMessageException $e) {
+                    // try the message split in lines
+                    $lines = explode("\n", $event);
+                    foreach ($lines as $line) {
+                        try {
+                            $dataObject = $this->processEventData($line);
+                            $onEvent($dataObject);
+                        } catch (InvalidMessageException $ex) {
+                            if ($onError) {
+                                $onError($line);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     /**
      * Start a TCP GELF Server.
      * @param int $minPort Lowest allowed port number to listen on.
@@ -86,6 +111,7 @@ abstract class AbstractServer
      * @param callable $onProcess Callback executed periodically when server is running.
      * @param callable $onEvent Callback executed when a message is received.
      * @param callable $onTerminate Callback executed when server is terminated.
+     * @param callable $onError Callback executed when an invalid event is encountered.
      */
     abstract public function start(
         $minPort,
@@ -93,6 +119,7 @@ abstract class AbstractServer
         callable $onStart,
         callable $onProcess,
         callable $onEvent,
-        callable $onTerminate = null
+        callable $onTerminate = null,
+        callable $onError = null
     );
 }

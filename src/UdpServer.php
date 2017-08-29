@@ -13,8 +13,15 @@ class UdpServer extends AbstractServer
     /**
      * @inheritdoc
      */
-    public function start($minPort, $maxPort, callable $onStart, callable $onProcess, callable $onEvent, callable $onTerminate = null)
-    {
+    public function start(
+        $minPort,
+        $maxPort,
+        callable $onStart,
+        callable $onProcess,
+        callable $onEvent,
+        callable $onTerminate = null,
+        callable $onError = null
+    ) {
         $started = false;
         $terminated = false;
         $port = '';
@@ -47,11 +54,10 @@ class UdpServer extends AbstractServer
         );
 
         $chunks = [];
-        $this->server->on('data', function ($data) use ($onEvent, &$chunks) {
+        $this->server->on('data', function ($data) use ($onEvent, $onError, &$chunks) {
             $dataDecoded = $this->processData($data, $chunks);
             if ($dataDecoded) {
-                $dataObject = $this->processEventData($dataDecoded);
-                $onEvent($dataObject);
+                $this->processEvents([$dataDecoded], $onEvent, $onError);
             }
         });
 

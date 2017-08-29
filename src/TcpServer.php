@@ -5,14 +5,22 @@ namespace Keboola\Gelf;
 use Keboola\Gelf\StreamServer\TcpStreamServer;
 use React\EventLoop\Factory;
 use React\Socket\Connection;
+use React\Socket\ConnectionInterface;
 
 class TcpServer extends AbstractServer
 {
     /**
      * @inheritdoc
      */
-    public function start($minPort, $maxPort, callable $onStart, callable $onProcess, callable $onEvent, callable $onTerminate = null)
-    {
+    public function start(
+        $minPort,
+        $maxPort,
+        callable $onStart,
+        callable $onProcess,
+        callable $onEvent,
+        callable $onTerminate = null,
+        callable $onError = null
+    ) {
         $started = false;
         $terminated = false;
         $port = '';
@@ -40,8 +48,8 @@ class TcpServer extends AbstractServer
         );
 
         $buffer = '';
-        $this->server->on('connection', function (Connection $conn) use ($onEvent, &$buffer) {
-            $conn->on('data', function ($data) use ($conn, $onEvent, &$buffer) {
+        $this->server->on('connection', function (ConnectionInterface $conn) use ($onEvent, $onError, &$buffer) {
+            $conn->on('data', function ($data) use ($conn, $onEvent, $onError, &$buffer) {
                 $buffer .= $data;
                 $events = explode("\x00", $buffer);
                 if (substr($buffer, -1) != "\x00") {
@@ -51,12 +59,7 @@ class TcpServer extends AbstractServer
                     // buffer is finished, clear it
                     $buffer = '';
                 }
-                foreach ($events as $event) {
-                    if ($event) {
-                        $dataObject = $this->processEventData($event);
-                        $onEvent($dataObject);
-                    }
-                }
+                $this->processEvents($events, $onEvent, $onError);
             });
         });
 
