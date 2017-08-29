@@ -61,7 +61,7 @@ class UdpServer extends AbstractServer
 
     /**
      * @param string $data Raw data from source.
-     * @param array $chunks Array containing already recieved chunks.
+     * @param array $chunks Array containing already received chunks.
      * @return string Decoded data.
      */
     private function processData($data, &$chunks)
