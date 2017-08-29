@@ -11,7 +11,7 @@ Add gelf-server to composer.json either by running `composer require keboola/gel
 
 	"require": {
 	   // ...
-	   "keboola/gelf-server": "~1.0"
+	   "keboola/gelf-server": "^1.1"
 	   // ...
 	}
 
