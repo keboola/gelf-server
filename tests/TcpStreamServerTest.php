@@ -36,6 +36,6 @@ class TcpStreamServerTest extends AbstractGelfTest
             }
         );
         $this->checkResults($events);
-        self::assertEquals(['complete garbage'], $fails);
+        self::assertEquals(['complete garbage', 'even more garbage without null'], $fails);
     }
 }

@@ -54,5 +54,7 @@ $buff = '{"version":"1.0","host":"abc","short_message":"First message","level":7
 socket_send($socket, $buff, strlen($buff), 0);
 $buff = 'complete garbage' . "\x00";
 socket_send($socket, $buff, strlen($buff), 0);
+$buff = 'even more garbage without null';
+socket_send($socket, $buff, strlen($buff), 0);
 
 socket_close($socket);

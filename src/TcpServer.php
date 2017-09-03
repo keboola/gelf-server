@@ -23,17 +23,21 @@ class TcpServer extends AbstractServer
         $started = false;
         $terminated = false;
         $port = '';
+        $buffer = '';
 
         $loop = Factory::create();
         $this->server = new TcpStreamServer($loop);
         $loop->addPeriodicTimer(
             1,
-            function () use ($onStart, $onProcess, $onTerminate, &$started, &$terminated, &$loop, &$port) {
+            function () use ($onStart, $onProcess, $onTerminate, $onEvent, $onError, &$started, &$terminated, &$loop, &$port, &$buffer) {
                 if (!$started) {
                     $onStart($port);
                     $started = true;
                 } else {
                     if ($terminated) {
+                        if ($buffer != '') {
+                            $this->processEvents([$buffer], $onEvent, $onError);
+                        }
                         if ($onTerminate) {
                             $onTerminate();
                         }
@@ -46,7 +50,6 @@ class TcpServer extends AbstractServer
             }
         );
 
-        $buffer = '';
         $this->server->on('connection', function (ConnectionInterface $conn) use ($onEvent, $onError, &$buffer) {
             $conn->on('data', function ($data) use ($conn, $onEvent, $onError, &$buffer) {
                 $buffer .= $data;
