@@ -93,7 +93,7 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
      */
     public function close()
     {
-        $this->loop->removeStream($this->master);
+        $this->loop->removeReadStream($this->master);
         fclose($this->master);
         $this->removeAllListeners();
     }
