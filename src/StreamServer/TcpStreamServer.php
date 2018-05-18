@@ -3,6 +3,7 @@
 namespace Keboola\Gelf\StreamServer;
 
 use Evenement\EventEmitter;
+use Keboola\Gelf\Exception\InitException;
 use React\EventLoop\LoopInterface;
 use React\Socket\Connection;
 use React\Socket\ServerInterface;
@@ -47,7 +48,7 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
      * Start the server by listening on a specified port and address.
      * @param int $port
      * @param string $host
-     * @throws \RuntimeException
+     * @throws InitException
      */
     public function listen($port, $host = '0.0.0.0')
     {
@@ -57,17 +58,17 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
             $host = '[' . $host . ']';
         }
 
-        $this->master = stream_socket_server("tcp://$host:$port", $errorNumber, $errorString);
+        $this->master = @stream_socket_server("tcp://$host:$port", $errorNumber, $errorString);
         if (false === $this->master) {
             $message = "Could not bind to tcp://$host:$port: $errorString";
-            throw new \RuntimeException($message, $errorNumber);
+            throw new InitException($message, $errorNumber);
         }
         stream_set_blocking($this->master, 0);
 
         $this->loop->addReadStream($this->master, function ($master) {
             $newSocket = @stream_socket_accept($master);
             if (false === $newSocket) {
-                $this->emit('error', [new \RuntimeException('Error accepting new connection')]);
+                $this->emit('error', [new InitException('Error accepting new connection')]);
 
                 return;
             }
