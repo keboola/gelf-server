@@ -37,10 +37,10 @@ abstract class AbstractServer
             try {
                 $this->server->listen($port);
                 $connected = true;
-            } catch (\RuntimeException $e) {
+            } catch (InitException $e) {
                 $retries++;
                 if ($retries >= self::SERVER_START_RETRIES) {
-                    throw new InitException("Failed to start server " . $e->getMessage(), $e);
+                    throw new InitException("Failed to start server " . $e->getMessage(), $e->getCode(), $e);
                 }
             }
         }

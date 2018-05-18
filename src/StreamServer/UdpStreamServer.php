@@ -3,6 +3,7 @@
 namespace Keboola\Gelf\StreamServer;
 
 use Evenement\EventEmitter;
+use Keboola\Gelf\Exception\InitException;
 use React\Datagram\Factory;
 use React\Datagram\Socket;
 use React\EventLoop\LoopInterface;
@@ -48,7 +49,7 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
      * Start the server by listening on a specified port and address.
      * @param int $port
      * @param string $host
-     * @throws \RuntimeException
+     * @throws InitException
      */
     public function listen($port, $host = '0.0.0.0')
     {
