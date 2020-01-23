@@ -63,6 +63,9 @@ abstract class AbstractServer
         if (!$dataObject) {
             return [];
         }
+        if (!is_array($dataObject)) {
+            $dataObject = [$dataObject];
+        }
         foreach ($dataObject as $key => $value) {
             if (substr($key, 0, 1) == '_') {
                 // custom field may get double encoded
