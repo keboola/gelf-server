@@ -106,7 +106,7 @@ abstract class AbstractServer
                             $onEvent($dataObject);
                         } catch (InvalidMessageException $ex) {
                             if ($onError) {
-                                $onError($ex->getMessage() . ' Data: "' . $line . "'");
+                                $onError($ex->getMessage() . ' Data: "' . $line . '".');
                             }
                         }
                     }

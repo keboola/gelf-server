@@ -37,7 +37,13 @@ class TcpStreamServerTest extends AbstractGelfTest
             }
         );
         $this->checkResults($events);
-        self::assertEquals(['complete garbage', 'even more garbage without null'], $fails);
+        self::assertEquals(
+            [
+                'Cannot parse JSON data in event: "Syntax error". Data: "complete garbage"',
+                'Cannot parse JSON data in event: "Syntax error". Data: "even more garbage without null"',
+            ],
+            $fails
+        );
     }
 
 
