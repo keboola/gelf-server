@@ -56,7 +56,7 @@ abstract class AbstractServer
         $dataObject = json_decode($data, true);
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new InvalidMessageException(
-                'Cannot parse JSON data in event: "' . json_last_error() . '".',
+                'Cannot parse JSON data in event: "' . json_last_error_msg() . '".',
                 $data
             );
         }
