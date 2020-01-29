@@ -44,8 +44,8 @@ class HttpStreamServerTest extends AbstractGelfTest
                 'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 16".',
                 'Cannot parse JSON data in event: "Syntax error". Data: "complete garbage".',
                 'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1".',
-                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 193".',
-                'Cannot parse JSON data in event: "Syntax error". Data: "garbage".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 17".',
+                'Message data is not array: "\'partial garbage\'". Data: ""partial garbage"".',
             ],
             $fails
         );

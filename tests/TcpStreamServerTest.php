@@ -40,6 +40,7 @@ class TcpStreamServerTest extends AbstractGelfTest
         self::assertEquals(
             [
                 'Cannot parse JSON data in event: "Syntax error". Data: "complete garbage".',
+                'Message data is not array: "\'partial garbage\'". Data: ""partial garbage"".',
                 'Cannot parse JSON data in event: "Syntax error". Data: "even more garbage without null".',
             ],
             $fails
