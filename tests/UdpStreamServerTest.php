@@ -36,6 +36,6 @@ class UdpStreamServerTest extends AbstractGelfTest
             }
         );
         $this->checkResults($events);
-        self::assertEquals(['Cannot parse JSON data in event: "Syntax error". Data: "complete garbage"'], $fails);
+        self::assertEquals(['Cannot parse JSON data in event: "Syntax error". Data: "complete garbage".'], $fails);
     }
 }

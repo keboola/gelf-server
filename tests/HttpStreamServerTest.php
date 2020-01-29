@@ -38,11 +38,14 @@ class HttpStreamServerTest extends AbstractGelfTest
         $this->checkResults($events);
         self::assertEquals(
             [
-                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1"',
-                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 193"',
-                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1"',
-                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 16"',
-                'Cannot parse JSON data in event: "Syntax error". Data: "complete garbage"'
+                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 193".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 16".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "complete garbage".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 193".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "garbage".',
             ],
             $fails
         );
