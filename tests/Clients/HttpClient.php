@@ -56,5 +56,8 @@ socket_send($socket, $buff, strlen($buff), 0);
 $buff = 'complete garbage';
 $buff = "POST /gelf HTTP/1.1\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff . "\r\n";
 socket_send($socket, $buff, strlen($buff), 0);
+$buff = '"partial garbage"';
+$buff = "POST /gelf HTTP/1.1\r\nContent-Length: " . strlen($buff) . "\r\n\r\n" . $buff . "\r\n";
+socket_send($socket, $buff, strlen($buff), 0);
 
 socket_close($socket);
