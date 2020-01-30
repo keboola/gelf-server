@@ -17,7 +17,8 @@
         "react/socket": "^0.8",
         "react/datagram": "^1.2",
         "graylog2/gelf-php": "^1.5",
-        "symfony/process": "^2.8|^4.1"
+        "symfony/process": "^2.8|^4.1",
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {

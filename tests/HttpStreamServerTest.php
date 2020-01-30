@@ -37,8 +37,16 @@ class HttpStreamServerTest extends AbstractGelfTest
         );
         $this->checkResults($events);
         self::assertEquals(
-            ['POST /gelf HTTP/1.1', 'Content-Length: 193',
-                'POST /gelf HTTP/1.1', 'Content-Length: 16', 'complete garbage'],
+            [
+                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 193".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 16".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "complete garbage".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "POST /gelf HTTP/1.1".',
+                'Cannot parse JSON data in event: "Syntax error". Data: "Content-Length: 17".',
+                'Message data is not array: "\'partial garbage\'". Data: ""partial garbage"".',
+            ],
             $fails
         );
     }

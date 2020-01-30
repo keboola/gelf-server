@@ -56,7 +56,13 @@ abstract class AbstractServer
         $dataObject = json_decode($data, true);
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new InvalidMessageException(
-                "I Cannot parse JSON data in event - error: " . json_last_error(),
+                'Cannot parse JSON data in event: "' . json_last_error_msg() . '".',
+                $data
+            );
+        }
+        if (!is_array($dataObject)) {
+            throw new InvalidMessageException(
+                'Message data is not array: "' . var_export($dataObject, true) . '".',
                 $data
             );
         }
@@ -100,7 +106,7 @@ abstract class AbstractServer
                             $onEvent($dataObject);
                         } catch (InvalidMessageException $ex) {
                             if ($onError) {
-                                $onError($line);
+                                $onError($ex->getMessage() . ' Data: "' . $line . '".');
                             }
                         }
                     }
