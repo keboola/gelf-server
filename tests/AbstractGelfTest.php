@@ -8,7 +8,7 @@ use PHPUnit\Framework\TestCase;
 
 abstract class AbstractGelfTest extends TestCase
 {
-    protected function checkResults(array $events)
+    protected function checkResults(array $events): void
     {
         $timestamps = [];
         $hosts = [];
@@ -17,7 +17,7 @@ abstract class AbstractGelfTest extends TestCase
         $exception = '';
         foreach ($events as $event) {
             self::assertArrayHasKey('timestamp', $event);
-            self::assertTrue(!empty($event['host']) || ($event['short_message'] == 'No host'));
+            self::assertTrue(!empty($event['host']) || ($event['short_message'] === 'No host'));
             $timestamps[] = $event['timestamp'];
             $hosts[] = empty($event['host']) ? 'empty' : $event['host'];
             if (!empty($event['file'])) {
@@ -41,8 +41,8 @@ abstract class AbstractGelfTest extends TestCase
                 'level' => 1,
                 'timestamp' => $timestamps[1],
                 '_structure' => [
-                    'data' => [0, 1]
-                ]
+                    'data' => [0, 1],
+                ],
             ],
             2 => [
                 'version' => '1.0',
@@ -76,7 +76,7 @@ abstract class AbstractGelfTest extends TestCase
                     'with' => [
                         'several' => 'nested',
                         0 => 'levels',
-                    ]
+                    ],
                 ],
             ],
             5 => [
@@ -106,7 +106,7 @@ abstract class AbstractGelfTest extends TestCase
                 'short_message' => 'Second message',
                 'level' => 7,
                 'timestamp' => $timestamps[8],
-            ]
+            ],
         ], $events);
     }
 }

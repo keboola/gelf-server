@@ -10,7 +10,7 @@ use React\EventLoop\Factory;
 
 class UdpServer extends AbstractServer
 {
-    const BUFFER_SIZE = 65536;
+    private const BUFFER_SIZE = 65536;
 
     /**
      * @inheritdoc
@@ -21,8 +21,8 @@ class UdpServer extends AbstractServer
         callable $onStart,
         callable $onProcess,
         callable $onEvent,
-        callable $onTerminate = null,
-        callable $onError = null
+        ?callable $onTerminate = null,
+        ?callable $onError = null
     ) {
         $started = false;
         $terminated = false;
@@ -79,14 +79,14 @@ class UdpServer extends AbstractServer
                 // Z-LIB (deflate) message
                 $dataDecoded = gzuncompress($data);
                 if ($dataDecoded === false) {
-                    throw new InvalidMessageException("Cannot GZ uncompress datagram.", $data);
+                    throw new InvalidMessageException('Cannot GZ uncompress datagram.', $data);
                 }
                 break;
             case 0x1f:
                 // Gzipped message
                 $dataDecoded = gzdecode($data);
                 if ($dataDecoded === false) {
-                    throw new InvalidMessageException("I Cannot GZ decode datagram.", $data);
+                    throw new InvalidMessageException('I Cannot GZ decode datagram.', $data);
                 }
                 break;
             case 0x1e:

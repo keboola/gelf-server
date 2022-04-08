@@ -61,7 +61,7 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
         }
 
         $this->master = @stream_socket_server("tcp://$host:$port", $errorNumber, $errorString);
-        if (false === $this->master) {
+        if ($this->master === false) {
             $message = "Could not bind to tcp://$host:$port: $errorString";
             throw new InitException($message, $errorNumber);
         }
@@ -69,7 +69,7 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
 
         $this->loop->addReadStream($this->master, function ($master) {
             $newSocket = @stream_socket_accept($master);
-            if (false === $newSocket) {
+            if ($newSocket === false) {
                 $this->emit('error', [new InitException('Error accepting new connection')]);
 
                 return;

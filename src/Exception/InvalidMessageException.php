@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Keboola\Gelf\Exception;
 
-class InvalidMessageException extends \RuntimeException
+use RuntimeException;
+
+class InvalidMessageException extends RuntimeException
 {
     protected $data;
 

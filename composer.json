@@ -31,15 +31,15 @@
         "keboola/coding-standard": ">=7.0.2",
         "phpstan/phpstan": "^1.5",
         "phpstan/phpstan-phpunit": "^1.0.0",
-        "phpunit/phpunit": "^9.3"
+        "phpunit/phpunit": "^9.3",
+        "ext-sockets": "*",
+        "ext-zlib": "*"
     },
     "scripts": {
         "tests": "phpunit --coverage-clover build/logs/clover.xml --coverage-xml=build/logs/coverage-xml --log-junit=build/logs/phpunit.junit.xml",
         "phpstan": "phpstan analyse --no-progress -c phpstan.neon",
         "phpcs": "phpcs --extensions=php src tests",
         "build": [
-            "@phpcs",
-            "@phpstan",
             "@tests"
         ],
         "ci": [
