@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Gelf\Tests;
 
-abstract class AbstractGelfTest extends \PHPUnit_Framework_TestCase
+use PHPUnit\Framework\TestCase;
+
+abstract class AbstractGelfTest extends TestCase
 {
     protected function checkResults(array $events)
     {

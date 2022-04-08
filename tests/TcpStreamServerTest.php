@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Gelf\Tests;
 
 use Keboola\Gelf\Exception\InitException;
@@ -8,13 +10,13 @@ use Symfony\Component\Process\Process;
 
 class TcpStreamServerTest extends AbstractGelfTest
 {
-    public function testServer()
+    public function testServer(): void
     {
         $server = ServerFactory::createServer(ServerFactory::SERVER_TCP);
         $events = [];
         $fails = [];
         $process = new Process(
-            'php ' . __DIR__ . DIRECTORY_SEPARATOR . 'Clients' . DIRECTORY_SEPARATOR . 'TcpClient.php'
+            ['php', __DIR__ . DIRECTORY_SEPARATOR . 'Clients' . DIRECTORY_SEPARATOR . 'TcpClient.php']
         );
         $server->start(
             12201,
@@ -47,12 +49,11 @@ class TcpStreamServerTest extends AbstractGelfTest
         );
     }
 
-
-    public function testServerFail()
+    public function testServerFail(): void
     {
         $server = ServerFactory::createServer(ServerFactory::SERVER_TCP);
         $process = new Process(
-            'php ' . __DIR__ . DIRECTORY_SEPARATOR . 'Clients' . DIRECTORY_SEPARATOR . 'TcpClient.php'
+            ['php', __DIR__ . DIRECTORY_SEPARATOR . 'Clients' . DIRECTORY_SEPARATOR . 'TcpClient.php']
         );
         self::expectException(InitException::class);
         self::expectExceptionMessage('Could not bind to tcp://0.0.0.0:12201: Address already in use');

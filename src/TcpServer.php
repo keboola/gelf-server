@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Gelf;
 
 use Keboola\Gelf\StreamServer\TcpStreamServer;
