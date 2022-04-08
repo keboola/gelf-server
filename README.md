@@ -1,4 +1,4 @@
-# GELF server [![Build Status](https://travis-ci.org/keboola/gelf-server.svg?branch=master)](https://travis-ci.org/keboola/gelf-server) 
+# GELF server [![GitHub Actions](https://github.com/keboola/gelf-server/actions/workflows/push.yml/badge.svg)](https://github.com/keboola/gelf-server/actions/workflows/push.yml)
 
 A php implementation of a [gelf](http://docs.graylog.org/en/2.0/pages/gelf.html) compatible backend like [Graylog2](https://www.graylog.org/). This library provides
 a simple server to which a GELF client can connect. 
