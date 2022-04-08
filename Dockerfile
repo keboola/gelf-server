@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
    --no-install-recommends && rm -r /var/lib/apt/lists/*
 
 COPY ./docker/php/php.ini /usr/local/etc/php/php.ini
+RUN docker-php-ext-install sockets
 
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin/ --filename=composer
 
