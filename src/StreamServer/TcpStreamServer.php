@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Gelf\StreamServer;
 
 use Evenement\EventEmitter;
@@ -59,15 +61,15 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
         }
 
         $this->master = @stream_socket_server("tcp://$host:$port", $errorNumber, $errorString);
-        if (false === $this->master) {
+        if ($this->master === false) {
             $message = "Could not bind to tcp://$host:$port: $errorString";
             throw new InitException($message, $errorNumber);
         }
-        stream_set_blocking($this->master, 0);
+        stream_set_blocking($this->master, false);
 
         $this->loop->addReadStream($this->master, function ($master) {
             $newSocket = @stream_socket_accept($master);
-            if (false === $newSocket) {
+            if ($newSocket === false) {
                 $this->emit('error', [new InitException('Error accepting new connection')]);
 
                 return;
@@ -78,7 +80,7 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
 
     public function handleConnection($socket)
     {
-        stream_set_blocking($socket, 0);
+        stream_set_blocking($socket, false);
         $client = $this->createConnection($socket);
         $this->emit('connection', [$client]);
     }

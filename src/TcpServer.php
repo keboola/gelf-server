@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Gelf;
 
 use Keboola\Gelf\StreamServer\TcpStreamServer;
@@ -17,8 +19,8 @@ class TcpServer extends AbstractServer
         callable $onStart,
         callable $onProcess,
         callable $onEvent,
-        callable $onTerminate = null,
-        callable $onError = null
+        ?callable $onTerminate = null,
+        ?callable $onError = null
     ) {
         $started = false;
         $terminated = false;
@@ -29,7 +31,10 @@ class TcpServer extends AbstractServer
         $this->server = new TcpStreamServer($loop);
         $loop->addPeriodicTimer(
             1,
-            function () use ($onStart, $onProcess, $onTerminate, $onEvent, $onError, &$started, &$terminated, &$loop, &$port, &$buffer) {
+            function () use (
+                $onStart, $onProcess, $onTerminate, $onEvent, $onError,
+                &$started, &$terminated, &$loop, &$port, &$buffer
+            ) {
                 if (!$started) {
                     $onStart($port);
                     $started = true;

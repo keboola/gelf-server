@@ -5,20 +5,17 @@
          convertErrorsToExceptions="true"
          convertNoticesToExceptions="true"
          convertWarningsToExceptions="true"
-         stopOnFailure="false"
-         debug="true">
+         stopOnFailure="false">
     <testsuites>
         <testsuite name="GELF Server Test suite">
             <directory>./tests</directory>
             <exclude>./tests/clients/</exclude>
         </testsuite>
     </testsuites>
-    <filter>
-        <whitelist processUncoveredFilesFromWhitelist="true">
-            <directory suffix=".php">./src/*</directory>
-            <exclude>
-                <directory>./vendor/*</directory>
-            </exclude>
-        </whitelist>
-    </filter>
+    <coverage processUncoveredFiles="true">
+        <include>
+            <directory suffix=".php">src</directory>
+            <directory suffix=".php">tests</directory>
+        </include>
+    </coverage>
 </phpunit>

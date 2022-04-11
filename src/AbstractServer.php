@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Keboola\Gelf;
 
 use Keboola\Gelf\Exception\InitException;
@@ -13,10 +15,7 @@ abstract class AbstractServer
      */
     const SERVER_START_RETRIES = 10;
 
-    /**
-     * @var ServerInterface
-     */
-    protected $server;
+    protected ServerInterface $server;
 
     /**
      * Find a free port for the server and start it.
