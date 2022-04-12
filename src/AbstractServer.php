@@ -52,7 +52,7 @@ abstract class AbstractServer
      */
     protected function processEventData($data)
     {
-        $dataObject = json_decode($data, true);
+        $dataObject = json_decode((string) $data, true);
         if (json_last_error() != JSON_ERROR_NONE) {
             throw new InvalidMessageException(
                 'Cannot parse JSON data in event: "' . json_last_error_msg() . '".',
@@ -74,7 +74,7 @@ abstract class AbstractServer
                 if (is_array($value)) {
                     $dataObject[$key] = $value;
                 } else {
-                    $valueObject = json_decode($value, true);
+                    $valueObject = json_decode((string) $value, true);
                     if (json_last_error() == JSON_ERROR_NONE) {
                         // successfully parsed
                         $dataObject[$key] = $valueObject;
