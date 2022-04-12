@@ -65,6 +65,7 @@ abstract class AbstractGelfTest extends TestCase
                 'facility' => 'example-facility',
                 '_foo' => 'bar',
                 '_bar' => 'baz',
+                '_barKochba' => 15,
             ],
             4 => [
                 'version' => '1.0',
