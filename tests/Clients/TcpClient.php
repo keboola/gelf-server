@@ -31,6 +31,7 @@ $message->setShortMessage('Structured message')
     ->setFacility('example-facility')
     ->setAdditional('foo', 'bar')
     ->setAdditional('bar', 'baz')
+    ->setAdditional('barKochba', 15)
 ;
 $publisher->publish($message);
 
