@@ -39,3 +39,7 @@ To start listening for connections, us the `start` method. This method has the f
 ## Examples
 
 For usage examples, see the [/examples](https://github.com/keboola/gelf-server/tree/master/examples) directory.
+
+## License
+
+MIT licensed, see [LICENSE](./LICENSE) file.
