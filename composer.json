@@ -20,7 +20,7 @@
         }
     },
     "require": {
-        "php": "^7.4",
+        "php": "^7.4|^8.0",
         "react/socket": "^0.8",
         "react/datagram": "^1.2",
         "graylog2/gelf-php": "^1.5",
