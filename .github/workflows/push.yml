@@ -5,13 +5,15 @@ env:
 jobs:
   Build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        phpVersion: [7.4, 8.1]
     steps:
       - name: Check out the repo
         uses: actions/checkout@v2
-      - name: Print Docker version
-        run: |
-          docker -v
-      - name: Build image and run tests
-        run: |
-          docker-compose build --pull
-          docker-compose run --rm tests
+
+      - name: Build image
+        run: docker-compose build --pull --build-arg PHP_VERSION=${{ matrix.phpVersion }} tests
+
+      - name: Run tests
+        run: docker-compose run --rm tests
