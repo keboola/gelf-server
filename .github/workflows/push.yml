@@ -7,10 +7,10 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        phpVersion: [7.4, 8.1]
+        phpVersion: [8.1]
     steps:
       - name: Check out the repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Build image
         run: docker-compose build --pull --build-arg PHP_VERSION=${{ matrix.phpVersion }} tests

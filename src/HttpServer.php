@@ -15,17 +15,17 @@ class HttpServer extends AbstractServer
      * @inheritdoc
      */
     public function start(
-        $minPort,
-        $maxPort,
+        int $minPort,
+        int $maxPort,
         callable $onStart,
         callable $onProcess,
         callable $onEvent,
-        callable $onTerminate = null,
-        callable $onError = null
-    ) {
+        ?callable $onTerminate = null,
+        ?callable $onError = null
+    ): void {
         $started = false;
         $terminated = false;
-        $port = '';
+        $port = null;
 
         $loop = Factory::create();
         $this->server = new TcpStreamServer($loop);
@@ -36,6 +36,7 @@ class HttpServer extends AbstractServer
                     $onStart($port);
                     $started = true;
                 } else {
+                    // @phpstan-ignore-next-line PHPStan doesn't recognize, that the value can change
                     if ($terminated) {
                         if ($onTerminate) {
                             $onTerminate();
@@ -51,13 +52,13 @@ class HttpServer extends AbstractServer
 
         $buffer = '';
         $contentLength = null;
-        $this->server->on('connection', function (ConnectionInterface $conn) use ($onEvent, $onError, &$buffer) {
-            $conn->on('data', function ($data) use ($conn, $onEvent, $onError, &$buffer, &$contentLength) {
-                $headers = substr($data, 0, strpos($data, "\r\n\r\n"));
+        $this->server->on('connection', function (ConnectionInterface $conn) use ($onEvent, $onError, &$buffer): void {
+            $conn->on('data', function (string $data) use ($conn, $onEvent, $onError, &$buffer, &$contentLength): void {
+                $headers = substr($data, 0, (int) strpos($data, "\r\n\r\n"));
                 if ($headers) {
                     $headers = explode("\r\n", $headers);
                     foreach ($headers as $header) {
-                        if (substr($header, 0, strlen('Content-Length')) == 'Content-Length') {
+                        if (substr($header, 0, strlen('Content-Length')) === 'Content-Length') {
                             $contentLength = substr($header, strlen('Content-Length: '));
                             break;
                         }
@@ -69,7 +70,7 @@ class HttpServer extends AbstractServer
                 }
                 $length = strlen($messageData);
                 if (!$contentLength) {
-                    throw new InvalidMessageException("Unknown content length.", $data);
+                    throw new InvalidMessageException('Unknown content length.', $data);
                 }
 
                 if ($length < $contentLength) {

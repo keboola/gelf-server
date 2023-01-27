@@ -14,17 +14,17 @@ class TcpServer extends AbstractServer
      * @inheritdoc
      */
     public function start(
-        $minPort,
-        $maxPort,
+        int $minPort,
+        int $maxPort,
         callable $onStart,
         callable $onProcess,
         callable $onEvent,
         ?callable $onTerminate = null,
         ?callable $onError = null
-    ) {
+    ): void {
         $started = false;
         $terminated = false;
-        $port = '';
+        $port = null;
         $buffer = '';
 
         $loop = Factory::create();
@@ -32,15 +32,25 @@ class TcpServer extends AbstractServer
         $loop->addPeriodicTimer(
             1,
             function () use (
-                $onStart, $onProcess, $onTerminate, $onEvent, $onError,
-                &$started, &$terminated, &$loop, &$port, &$buffer
+                $onStart,
+                $onProcess,
+                $onTerminate,
+                $onEvent,
+                $onError,
+                &$started,
+                &$terminated,
+                &$loop,
+                &$port,
+                &$buffer
             ) {
                 if (!$started) {
                     $onStart($port);
                     $started = true;
                 } else {
+                    // @phpstan-ignore-next-line PHPStan doesn't recognize, that the value can change
                     if ($terminated) {
-                        if ($buffer != '') {
+                        // @phpstan-ignore-next-line PHPStan doesn't recognize, that the value can change
+                        if ($buffer !== '') {
                             $this->processEvents([$buffer], $onEvent, $onError);
                         }
                         if ($onTerminate) {
@@ -55,11 +65,11 @@ class TcpServer extends AbstractServer
             }
         );
 
-        $this->server->on('connection', function (ConnectionInterface $conn) use ($onEvent, $onError, &$buffer) {
-            $conn->on('data', function ($data) use ($conn, $onEvent, $onError, &$buffer) {
+        $this->server->on('connection', function (ConnectionInterface $conn) use ($onEvent, $onError, &$buffer): void {
+            $conn->on('data', function (string $data) use ($onEvent, $onError, &$buffer): void {
                 $buffer .= $data;
                 $events = explode("\x00", $buffer);
-                if (substr($buffer, -1) != "\x00") {
+                if (substr($buffer, -1) !== "\x00") {
                     // buffer is unfinished, take last message and put it into next buffer
                     $buffer = array_pop($events);
                 } else {

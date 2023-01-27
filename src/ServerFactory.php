@@ -4,17 +4,15 @@ declare(strict_types=1);
 
 namespace Keboola\Gelf;
 
+use LogicException;
+
 class ServerFactory
 {
-    const SERVER_TCP = 'tcp';
-    const SERVER_UDP = 'udp';
-    const SERVER_HTTP = 'http';
+    public const SERVER_TCP = 'tcp';
+    public const SERVER_UDP = 'udp';
+    public const SERVER_HTTP = 'http';
 
-    /**
-     * @param $serverType
-     * @return AbstractServer
-     */
-    public static function createServer($serverType)
+    public static function createServer(string $serverType): AbstractServer
     {
         switch ($serverType) {
             case self::SERVER_UDP:
@@ -24,7 +22,7 @@ class ServerFactory
             case self::SERVER_HTTP:
                 return new HttpServer();
             default:
-                throw new \LogicException("Invalid Server type $serverType");
+                throw new LogicException("Invalid Server type $serverType");
         }
     }
 }

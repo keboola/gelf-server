@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Psr\Log\LogLevel;
+use function PHPUnit\Framework\assertInstanceOf;
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . '../../vendor/autoload.php';
 
@@ -28,7 +29,6 @@ $message = new Gelf\Message();
 $message->setShortMessage('Structured message')
     ->setLevel(LogLevel::ALERT)
     ->setFullMessage('There was a foo in bar')
-    ->setFacility('example-facility')
     ->setAdditional('foo', 'bar')
     ->setAdditional('bar', 'baz')
     ->setAdditional('barKochba', 15)
@@ -36,7 +36,7 @@ $message->setShortMessage('Structured message')
 $publisher->publish($message);
 
 $logger->warning('A warning message.', ['structure' => ['with' => ['several' => 'nested', 'levels']]]);
-$logger->info(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'bacon.txt'));
+$logger->info((string) file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'bacon.txt'));
 
 // manually create a socket to send some garbage in
 $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
@@ -45,20 +45,21 @@ if ($socket === false) {
     $errorMsg = socket_strerror($errorCode);
     echo "Cannot create socket: [$errorCode] $errorMsg";
 }
+assertInstanceOf(Socket::class, $socket);
 if (socket_connect($socket, $server, $port) === false) {
     $errorCode = socket_last_error();
     $errorMsg = socket_strerror($errorCode);
     echo "Cannot connect to socket: [$errorCode] $errorMsg";
 }
 
-$buff = gzcompress('{"version":"1.0","short_message":"No host","level":7,"timestamp":1504008347}');
+$buff = (string) gzcompress('{"version":"1.0","short_message":"No host","level":7,"timestamp":1504008347}');
 socket_send($socket, $buff, strlen($buff), 0);
-$buff = gzcompress(
+$buff = (string) gzcompress(
     '{"version":"1.0","host":"abc","short_message":"First message","level":7,"timestamp":1504008347}' . "\n" .
     '{"version":"1.0","host":"abc","short_message":"Second message","level":7,"timestamp":1504001234}'
 );
 socket_send($socket, $buff, strlen($buff), 0);
-$buff = gzcompress('complete garbage');
+$buff = (string) gzcompress('complete garbage');
 socket_send($socket, $buff, strlen($buff), 0);
 
 socket_close($socket);

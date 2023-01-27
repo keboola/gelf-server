@@ -18,25 +18,19 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
      * UDP Socket server
      * @var Socket
      */
-    private $socket;
+    private Socket $socket;
 
     /**
      * Event Loop.
      * @var LoopInterface
      */
-    private $loop;
+    private LoopInterface $loop;
 
     /**
      * Server address
      * @var string
      */
-    private $address;
-
-    /**
-     * IS the server paused
-     * @var bool
-     */
-    private $isPaused;
+    private string $address;
 
     /**
      * TcpStreamServer constructor.
@@ -53,7 +47,7 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
      * @param string $host
      * @throws InitException
      */
-    public function listen($port, $host = '0.0.0.0')
+    public function listen(int $port, string $host = '0.0.0.0'): void
     {
         $this->address = $port . ':' . $host;
         $factory = new Factory($this->loop);
@@ -65,19 +59,22 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
         });
     }
 
-    public function getPort()
+    public function getPort(): int
     {
-        $name = stream_socket_get_name($this->socket->getLocalAddress(), false);
-        return (int) substr(strrchr($name, ':'), 1);
+        $name = (string) stream_socket_get_name($this->socket->getLocalAddress(), false);
+        return (int) substr((string) strrchr($name, ':'), 1);
     }
 
-    public function close()
+    public function close(): void
     {
         $this->socket->end();
         $this->removeAllListeners();
     }
 
-    public function createConnection($socket)
+    /**
+     * @param resource $socket
+     */
+    public function createConnection($socket): Connection
     {
         return new Connection($socket, $this->loop);
     }
@@ -85,7 +82,7 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
     /**
      * @inheritdoc
      */
-    public function getAddress()
+    public function getAddress(): string
     {
         return $this->address;
     }
@@ -93,16 +90,14 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
     /**
      * @inheritdoc
      */
-    public function pause()
+    public function pause(): void
     {
-        $this->isPaused = true;
     }
 
     /**
      * @inheritdoc
      */
-    public function resume()
+    public function resume(): void
     {
-        $this->isPaused = false;
     }
 }

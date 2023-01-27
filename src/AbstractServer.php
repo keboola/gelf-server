@@ -6,6 +6,8 @@ namespace Keboola\Gelf;
 
 use Keboola\Gelf\Exception\InitException;
 use Keboola\Gelf\Exception\InvalidMessageException;
+use Keboola\Gelf\StreamServer\TcpStreamServer;
+use Keboola\Gelf\StreamServer\UdpStreamServer;
 use React\Socket\ServerInterface;
 
 abstract class AbstractServer
@@ -13,17 +15,18 @@ abstract class AbstractServer
     /**
      * Number of retries for starting the server.
      */
-    const SERVER_START_RETRIES = 10;
+    private const SERVER_START_RETRIES = 10;
 
+    /** @var TcpStreamServer|UdpStreamServer */
     protected ServerInterface $server;
 
     /**
      * Find a free port for the server and start it.
      * @param int $minPort Min port in range (inclusive).
      * @param int $maxPort Max port in range (inclusive).
-     * @param int $port Actual selected port (output).
+     * @param ?int $port Actual selected port (output).
      */
-    protected function startServer($minPort, $maxPort, &$port)
+    protected function startServer(int $minPort, int $maxPort, ?int &$port): void
     {
         if ($minPort > $maxPort) {
             throw new InitException("Invalid port range min ($minPort) is bigger than max ($maxPort).");
@@ -39,7 +42,7 @@ abstract class AbstractServer
             } catch (InitException $e) {
                 $retries++;
                 if ($retries >= self::SERVER_START_RETRIES) {
-                    throw new InitException("Failed to start server " . $e->getMessage(), $e->getCode(), $e);
+                    throw new InitException('Failed to start server ' . $e->getMessage(), $e->getCode(), $e);
                 }
             }
         }
@@ -50,10 +53,10 @@ abstract class AbstractServer
      * @param string $data Event data.
      * @return array Parsed event.
      */
-    protected function processEventData($data)
+    protected function processEventData(string $data): array
     {
-        $dataObject = json_decode((string) $data, true);
-        if (json_last_error() != JSON_ERROR_NONE) {
+        $dataObject = json_decode($data, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
             throw new InvalidMessageException(
                 'Cannot parse JSON data in event: "' . json_last_error_msg() . '".',
                 $data
@@ -69,13 +72,13 @@ abstract class AbstractServer
             return [];
         }
         foreach ($dataObject as $key => $value) {
-            if (substr($key, 0, 1) == '_') {
+            if (substr($key, 0, 1) === '_') {
                 // custom field may get double encoded
                 if (is_array($value)) {
                     $dataObject[$key] = $value;
                 } else {
                     $valueObject = json_decode((string) $value, true);
-                    if (json_last_error() == JSON_ERROR_NONE) {
+                    if (json_last_error() === JSON_ERROR_NONE) {
                         // successfully parsed
                         $dataObject[$key] = $valueObject;
                     } // else not a json, leave as is
@@ -85,7 +88,7 @@ abstract class AbstractServer
         return $dataObject;
     }
 
-    protected function processEvents($events, $onEvent, $onError)
+    protected function processEvents(array $events, callable $onEvent, ?callable $onError): void
     {
         foreach ($events as $event) {
             if ($event) {
@@ -121,16 +124,16 @@ abstract class AbstractServer
      * @param callable $onStart Callback executed once when server is started.
      * @param callable $onProcess Callback executed periodically when server is running.
      * @param callable $onEvent Callback executed when a message is received.
-     * @param callable $onTerminate Callback executed when server is terminated.
-     * @param callable $onError Callback executed when an invalid event is encountered.
+     * @param ?callable $onTerminate Callback executed when server is terminated.
+     * @param ?callable $onError Callback executed when an invalid event is encountered.
      */
     abstract public function start(
-        $minPort,
-        $maxPort,
+        int $minPort,
+        int $maxPort,
         callable $onStart,
         callable $onProcess,
         callable $onEvent,
-        callable $onTerminate = null,
-        callable $onError = null
-    );
+        ?callable $onTerminate = null,
+        ?callable $onError = null
+    ): void;
 }
