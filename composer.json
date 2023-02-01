@@ -25,11 +25,11 @@
         "react/datagram": "^1.9",
         "graylog2/gelf-php": "^2.0",
         "symfony/process": "^5.4|^6.0",
-        "ext-sockets": "*",
         "ext-json": "*",
         "ext-zlib": "*"
     },
     "require-dev": {
+        "ext-sockets": "*",
         "keboola/coding-standard": ">=14.0",
         "phpstan/phpstan": "^1.9",
         "phpstan/phpstan-phpunit": "^1.3",
