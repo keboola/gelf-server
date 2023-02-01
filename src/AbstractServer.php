@@ -72,7 +72,7 @@ abstract class AbstractServer
             return [];
         }
         foreach ($dataObject as $key => $value) {
-            if (substr($key, 0, 1) === '_') {
+            if (str_starts_with($key, '_')) {
                 // custom field may get double encoded
                 if (is_array($value)) {
                     $dataObject[$key] = $value;

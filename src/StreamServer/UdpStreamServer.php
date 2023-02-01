@@ -16,25 +16,21 @@ class UdpStreamServer extends EventEmitter implements ServerInterface
 {
     /**
      * UDP Socket server
-     * @var Socket
      */
     private Socket $socket;
 
     /**
      * Event Loop.
-     * @var LoopInterface
      */
     private LoopInterface $loop;
 
     /**
      * Server address
-     * @var string
      */
     private string $address;
 
     /**
      * TcpStreamServer constructor.
-     * @param LoopInterface $loop
      */
     public function __construct(LoopInterface $loop)
     {

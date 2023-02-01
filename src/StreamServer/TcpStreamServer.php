@@ -22,19 +22,16 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
 
     /**
      * Event Loop.
-     * @var LoopInterface
      */
     private LoopInterface $loop;
 
     /**
      * Server address
-     * @var string
      */
     private string $address;
 
     /**
      * TcpStreamServer constructor.
-     * @param LoopInterface $loop
      */
     public function __construct(LoopInterface $loop)
     {
@@ -43,8 +40,6 @@ class TcpStreamServer extends EventEmitter implements ServerInterface
 
     /**
      * Start the server by listening on a specified port and address.
-     * @param int $port
-     * @param string $host
      * @throws InitException
      */
     public function listen(int $port, string $host = '0.0.0.0'): void
