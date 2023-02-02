@@ -8,15 +8,15 @@ use RuntimeException;
 
 class InvalidMessageException extends RuntimeException
 {
-    protected $data;
+    protected string $data;
 
-    public function __construct($message, $data)
+    public function __construct(string $message, string $data)
     {
         parent::__construct($message, 0, null);
         $this->data = $data;
     }
 
-    public function getData()
+    public function getData(): string
     {
         return $this->data;
     }

@@ -3,6 +3,7 @@
 declare(strict_types=1);
 
 use Psr\Log\LogLevel;
+use function PHPUnit\Framework\assertInstanceOf;
 
 require_once __DIR__ . DIRECTORY_SEPARATOR . '../../vendor/autoload.php';
 
@@ -28,7 +29,6 @@ $message = new Gelf\Message();
 $message->setShortMessage('Structured message')
     ->setLevel(LogLevel::ALERT)
     ->setFullMessage('There was a foo in bar')
-    ->setFacility('example-facility')
     ->setAdditional('foo', 'bar')
     ->setAdditional('bar', 'baz')
     ->setAdditional('barKochba', 15)
@@ -36,7 +36,7 @@ $message->setShortMessage('Structured message')
 $publisher->publish($message);
 
 $logger->warning('A warning message.', ['structure' => ['with' => ['several' => 'nested', 'levels']]]);
-$logger->info(file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'bacon.txt'));
+$logger->info((string) file_get_contents(__DIR__ . DIRECTORY_SEPARATOR . 'bacon.txt'));
 unset($logger);
 
 // manually create a socket to send some garbage in
@@ -46,6 +46,7 @@ if ($socket === false) {
     $errorMsg = socket_strerror($errorCode);
     echo "Cannot create socket: [$errorCode] $errorMsg";
 }
+assertInstanceOf(Socket::class, $socket);
 if (socket_connect($socket, $server, $port) === false) {
     $errorCode = socket_last_error();
     $errorMsg = socket_strerror($errorCode);
